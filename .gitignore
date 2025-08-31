@@ -1,0 +1,24 @@
+# R noise
+.Rhistory
+.Rproj.user/
+.RData
+.Ruserdata
+
+# Python caches
+__pycache__/
+*.pyc
+
+# macOS
+.DS_Store
+
+# Large/raw data
+data/gwas/raw/
+data/raw/
+
+# Wide CSV exports (optional, large)
+data/**/tpm_matrix.csv
+
+# Local databases / logs
+*.duckdb
+*.duckdb.wal
+*.log
