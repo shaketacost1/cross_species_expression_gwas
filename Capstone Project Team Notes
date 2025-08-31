@@ -1,0 +1,208 @@
+Capstone Project Team
+
+Phase 1: Planning & Setup
+
+All Members
+  Review background paper (Berthelot et al. 2018).
+  Align on project goals and research questions.
+
+This project aims to build an interactive system that integrates enhancer maps, gene expression, CTCF binding, and GWAS(Genome-wide association study) data to reveal how evolutionary changes in gene regulatory elements shape gene activity and disease biology. By identifying which enhancers are conserved, gained, or lost across species and linking these patterns to expression changes and trait-associated variants, the system will provide researchers with powerful tools to explore the evolutionary dynamics of regulatory landscapes.
+Deliverables include:
+			
+A working software system (web app or Python package)
+Data integration (enhancers, gene expression, CTCF, GWAS)
+ Visualization tools for enhancer conservation, gain/loss, expression      differences, and trait associations
+Case studies of key genes to demonstrate functional impact
+ Set up shared GitHub repo, Slack/Teams channel, and project timeline (Gantt chart or Trello board).
+
+
+Phase 2: Data Collection & Organization
+
+Grace (Data Coordinator)
+ Collect enhancer datasets across species.
+ Gather CTCF binding site data.
+Shaketa (Genomics Specialist)
+ Collect gene expression data.
+Bgee is a great choice for clean, cross-species TPM. 
+Species used: human, mouse, macaque, pig, chicken 
+
+  Organize GWAS SNP datasets.
+  Deliverable: Clean, version-controlled datasets in shared repository.
+
+Phase 3: Data Mapping & Classification
+
+Shaketa (Bioinformatics Analyst)
+  Map enhancers across species.
+  Classify enhancers as conserved, gained, or lost.
+Grase (support)
+  Assist with cross-species alignment pipelines.
+  Deliverable: Annotated enhancer maps.
+
+
+Phase 4: Functional Analysis
+Tiya(Analysis Lead)
+  Analyze enhancer gain/loss versus gene expression changes.
+  Check enrichment near CTCF binding sites.
+ Grace(support)
+   Run overlap analyses with trait-associated SNPs.
+   Deliverable: Statistical summary tables & preliminary figures.
+
+
+ Phase 5: Backend & Database
+Michael (Software/Backend Developer)
+ Build database to house enhancers, CTCF sites, expression data, SNPs.
+  Develop backend API for queries.
+Wessley (support)
+  Ensure smooth data integration.
+  Deliverable: Functional backend with documented endpoints.
+
+
+Phase 6: Visualization & Interface
+Wesley (Lead)
+   Design interactive visualizations (web app or Python Dash/Streamlit).
+Michael (support)
+  Ensure plots highlight key biological insights.
+  Deliverable: User-friendly interface for exploration.
+
+
+Phase 7: Case Studies & Interpretation
+
+All Members
+    Select a few key genes to showcase enhancer evolution.
+    Write detailed case studies tying biology to data insights.
+    Deliverable: Case study narratives with integrated visualizations.
+
+
+Phase 8: Final Deliverables & Presentation
+
+  Shaketa & Grace (Writing Leads)
+  Draft final report & documentation.
+  Michael & Tiya (Data/Methods Section)
+  Contribute technical writeups on analyses.
+   Wesley (Software Section)
+  Document backend, visualizations, and app usage.
+  
+All Members
+  Prepare presentation slides & rehearse.
+  Deliverables:
+  Functional software system (web app or Python package).
+  Final written report.
+  Oral presentation.
+
+Assign **weekly check-ins** with rotating leadership to ensure progress across parallel tasks.
+Meetings will be held Tue @12:30 
+
+
+
+
+
+
+
+
+Which species and datasets are most critical for the analysis (e.g. human, mouse, primates)?
+All will be in reference to human (i.e., what is considered “gained” or “lost”). Outside of that, you should plan to use a minimum of 2 other species (rhesus macaque and mouse are good options). More species will make your annotations more accurate. The Villar 2015 paper I linked has initial data for ~20.
+Are there particular diseases or traits you would like us to focus on?
+In the beginning, I think we can start with data from “normal” samples. As you start to look at trait-associated variants (GWAS) in the context of these landscapes, I would use traits that are also studied in model systems. Alcohol use is a good option (we have lots of cross-species data) as well as broader things like inflammation.  
+Do you prefer a web-based application for broader access, or a Python package geared toward research flexibility?
+A web-based applications would be great. I linked an example from previous semesters in my earlier email.
+Should the system be optimized for genome-wide scans, or for detailed case studies on specific loci?
+Genome-wide, although you may find focusing on a smaller set of regions is helpful in earlier sprints.
+What level of interactivity and detail do you expect in the visualizations?
+Saving this for in-person discussion. To some extent, this is up to your group’s discretion.
+Should results be designed for export to downstream bioinformatics pipelines, or primarily for visualization?
+Visualization, although having exportable results that could be used for other research efforts would be a big plus.
+
+
+
+
+
+
+
+
+
+
+
+Team Meeting Logistics
+Figure out the best times for 3 meetings/week (works around everyone’s schedule).
+Stick to the 3-day-a-week rhythm to maintain progress.
+Sprint Planning
+Complete sprint planning during the first week:
+Create user stories.
+Break down tasks for each story.
+Estimate effort with planning poker.
+Prioritize tasks and record them (Trello, sticky notes on a whiteboard, etc.).
+Track progress with a burndown chart (Excel or another tool).
+Client Interaction
+By Wednesday, schedule and meet with the client.
+Come prepared with questions and pitch your initial idea.
+Clients may not attend all demos, but you can still meet with them virtually or in person during the sprint.
+Faculty Support
+Check in with Dr. Benson and instructor for feedback and guidance.
+They’ve mentored many groups and can clarify expectations.
+Lab Access
+Try to get access to the lab early.
+If you have time, head down across the bridge to secure space/resources(lab 270).
+
+
+
+
+
+Project Progress Notes
+1. Gene Expression Data (Bgee)
+Goal: Collect cross-species gene expression (TPM) data from the Bgee database.
+Species processed:
+Human
+Mouse
+Rhesus macaque
+Pig
+Implementation details:
+Used build_from_bgee_duckdb.R.
+Switched from wide CSVs to DuckDB + Parquet format to avoid memory issues.
+Added skip logic so already-processed species are not re-run.
+Output structure per species:
+data/expression/{species}/
+    tpm_long.parquet
+    bgee.duckdb
+
+
+Status: All four selected species successfully processed and stored in standardized format.
+
+2. GWAS Data (NHGRI-EBI Catalog)
+Goal: Organize GWAS SNP datasets relevant to functional annotation.
+Implementation details:
+Used prepare_gwas.R.
+Script downloads the full NHGRI-EBI GWAS Catalog (~956,000 rows).
+Extracted trait-specific subsets at genome-wide significance (p <= 5e-08).
+Traits extracted: alcohol use, inflammation, BMI.
+Output structure:
+data/gwas/raw/
+    gwas_catalog_full.tsv.gz
+data/gwas/clean/
+    alcohol.parquet
+    inflammation.parquet
+    bmi.parquet
+
+
+Status: Clean datasets prepared and saved in Parquet format.
+
+3. Repository Organization
+Established project directory structure:
+data/
+  expression/
+  gwas/
+    raw/
+    clean/
+processing_scripts/
+docs/
+
+
+Scripts callable from anywhere using absolute paths (e.g., ~/processing_scripts/...).
+Code updated for reusability and reproducibility (absolute paths, modular functions, skip logic).
+4. GitHub Repo
+Created a clean project directory (my_project) with proper structure.
+Added a .gitignore so large/raw data and local noise aren’t tracked.
+Initialized Git and made the first commit.
+Linked your local repo to GitHub.
+Successfully pushed main  now the code, scripts, and metadata are all in GitHub.
+
+
