@@ -1,3 +1,49 @@
+
+cd ~/my_project
+
+# 1) Confirm the TSV exists and there are no weird chars in the path
+ls -lb data/regulatory/human/ctcf_report.tsv
+sed -n '1,3p' data/regulatory/human/ctcf_report.tsv | cat -A
+
+
+
+# 2) Get the column index for "Download URL" (header is on line 2)
+COL=$(awk -F'\t' 'NR==2{for(i=1;i<=NF;i++) if($i=="Download URL"){print i; exit}}' data/regulatory/human/ctcf_report.tsv)
+echo "Download URL col = $COL"
+
+
+
+tail -n +3 data/regulatory/human/ctcf_report.tsv \
+| awk -F'\t' -v c="$COL" '{u=$c; if(u!=""){ if(u ~ /^https?:\/\//) print u; else print "https://www.encodeproject.org" u }}' \
+> data/regulatory/human/ctcf_urls.txt
+
+wc -l data/regulatory/human/ctcf_urls.txt
+head -5 data/regulatory/human/ctcf_urls.txt
+
+wget -c -i data/regulatory/human/ctcf_urls.txt -P data/regulatory/human/ctcf_raw
+
+ls -lh data/regulatory/human/ctcf_raw | wc -l
+gzip -cd data/regulatory/human/ctcf_raw/*.bed.gz | head
+
+
+
+
+mkdir -p data/regulatory/human/{ctcf_raw,h3k27ac_raw}
+
+CTCF_TSV_URL="https://www.encodeproject.org/report/?type=File&assay_title=TF+ChIP-seq&target.label=CTCF&status=released&file_type=bed+narrowPeak&biosample_ontology.organ_slims=liver&assembly=GRCh38&limit=all&format=tsv"
+curl -fsSL -H "Accept: text/tsv" "$CTCF_TSV_URL" > data/regulatory/human/ctcf_report.tsv
+
+
+
+
+
+
+
+
+
+
+
+
 cut -f20 file_report_2025_9_4_3h_31m.tsv | grep -v "Download URL" > ctcf_urls.txt
 
 
