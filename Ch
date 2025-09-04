@@ -1,12 +1,10 @@
 F=data/regulatory/human/ctcf_report.tsv
-
 jq -r '.["@graph"][]
   | select(.assembly=="GRCh38")
-  | select((.file_type=="bed narrowPeak") or (.file_type=="bigBed narrowPeak"))
-  | "/files/\(.accession)/@@download/\(.filename)"' "$F" \
+  | select(.file_type=="bed narrowPeak" or .file_type=="bigBed narrowPeak")
+  | .href' "$F" \
 | sed 's|^|https://www.encodeproject.org|g' \
 > data/regulatory/human/ctcf_urls.txt
-
 
 
 # Inspect result
