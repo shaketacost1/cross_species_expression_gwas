@@ -1,3 +1,120 @@
+1) Export GWAS SNPs to BED (0-based)
+
+We’ll read each Parquet, create a BED with chr, start=pos-1, end=pos, plus handy columns to keep (e.g., rsID, trait, p-value if present).
+
+Run this from the repo root:
+
+
+
+Rscript - <<'RSCRIPT'
+suppressPackageStartupMessages({
+  library(arrow); library(dplyr); library(readr); library(stringr)
+})
+
+dir.create("data/gwas/bed", showWarnings = FALSE, recursive = TRUE)
+
+make_bed <- function(parquet_path, out_bed){
+  df <- read_parquet(parquet_path) %>% as.data.frame()
+
+  # Try to find columns robustly
+  cols <- tolower(names(df))
+  pick <- function(cands){
+    i <- match(tolower(cands), cols)
+    i <- i[!is.na(i)]
+    if (length(i)) names(df)[i[1]] else NA_character_
+  }
+
+  chr_col <- pick(c("CHR_ID","chr_id","chr","chromosome","chrom"))
+  pos_col <- pick(c("CHR_POS","chr_pos","position","pos","bp"))
+  rs_col  <- pick(c("SNPS","snp","rsid","rs_id"))
+  trait_col <- pick(c("DISEASE/TRAIT","disease_trait","trait"))
+  p_col  <- pick(c("P-VALUE","p_value","pval","pvalue"))
+
+  if (is.na(chr_col) || is.na(pos_col)) {
+    stop("Could not find chromosome/position columns in ", parquet_path)
+  }
+
+  out <- df %>%
+    transmute(
+      chr = paste0("chr", !!as.name(chr_col)),
+      start = as.numeric(!!as.name(pos_col)) - 1,
+      end   = as.numeric(!!as.name(pos_col)),
+      rsid  = if (!is.na(rs_col))  as.character(!!as.name(rs_col))  else NA_character_,
+      trait = if (!is.na(trait_col)) as.character(!!as.name(trait_col)) else NA_character_,
+      pval  = if (!is.na(p_col)) as.character(!!as.name(p_col)) else NA_character_
+    ) %>%
+    filter(!is.na(start), !is.na(end), !is.na(chr))
+
+  # Basic cleanup: remove any rows with negative starts or non-standard chrom labels
+  out <- out %>% filter(start >= 0, str_detect(chr, "^chr[0-9XYM]+$"))
+
+  # Write BED (tab-delimited, no header)
+  readr::write_tsv(out, out_bed, col_names = FALSE)
+  message("Wrote: ", out_bed, " (", nrow(out), " rows)")
+}
+
+make_bed("data/gwas/clean/alcohol.parquet",       "data/gwas/bed/alcohol.snps.bed")
+make_bed("data/gwas/clean/bmi.parquet",           "data/gwas/bed/bmi.snps.bed")
+make_bed("data/gwas/clean/inflammation.parquet",  "data/gwas/bed/inflammation.snps.bed")
+RSCRIPT
+
+Quick sanity check:
+head -3 data/gwas/bed/*.bed | sed -n '1,10p'
+
+2) Sort the BEDs (required by bedtools)
+
+for f in data/gwas/bed/*.snps.bed; do
+  sort -k1,1 -k2,2n "$f" > "${f%.bed}.sorted.bed"
+done
+
+
+
+3) Intersect with CTCF peaks (GRCh38)
+
+You already have the merged peaks at:
+data/regulatory/human/derived/ctcf_merged.GRCh38.bed
+
+Produce overlapped SNP lists (one per trait):
+
+bedtools intersect -wa -u \
+  -a data/gwas/bed/alcohol.snps.sorted.bed \
+  -b data/regulatory/human/derived/ctcf_merged.GRCh38.bed \
+  > data/regulatory/human/derived/alcohol_in_ctcf.bed
+
+bedtools intersect -wa -u \
+  -a data/gwas/bed/bmi.snps.sorted.bed \
+  -b data/regulatory/human/derived/ctcf_merged.GRCh38.bed \
+  > data/regulatory/human/derived/bmi_in_ctcf.bed
+
+bedtools intersect -wa -u \
+  -a data/gwas/bed/inflammation.snps.sorted.bed \
+  -b data/regulatory/human/derived/ctcf_merged.GRCh38.bed \
+  > data/regulatory/human/derived/inflammation_in_ctcf.bed
+
+
+
+Explanation:
+	•	-wa -u returns the SNP entries from -a that overlap at least one CTCF interval, without duplicating rows or appending the peak.
+
+If you want to also keep the CTCF interval alongside each SNP, use -wa -wb and write to a separate file (it will have SNP columns followed by CTCF columns).
+
+
+
+
+4) Summary counts
+
+for t in alcohol bmi inflammation; do
+  total=$(wc -l < data/gwas/bed/${t}.snps.sorted.bed | tr -d ' ')
+  hit=$(wc -l < data/regulatory/human/derived/${t}_in_ctcf.bed | tr -d ' ')
+  echo "${t}: ${hit}/${total} SNPs overlap CTCF"
+done
+
+
+
+
+
+
+
 
 mkdir -p data/regulatory/human/ctcf_raw
 wget -c -i data/regulatory/human/ctcf_urls.txt -P data/regulatory/human/ctcf_raw
