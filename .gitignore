@@ -1,24 +1,17 @@
-# R noise
+
+data/**/ctcf_raw/**
+data/**/enhancers_raw/**
+data/**/h3k27ac_raw/**
+data/gwas/raw/**
+
+data/**/derived/**/*.bed
+data/**/derived/**/*.parquet
+
+
+!data/**/metadata/**
+!data/**/derived/*qc*.tsv
+
+
 .Rhistory
 .Rproj.user/
-.RData
-.Ruserdata
-
-# Python caches
-__pycache__/
-*.pyc
-
-# macOS
 .DS_Store
-
-# Large/raw data
-data/gwas/raw/
-data/raw/
-
-# Wide CSV exports (optional, large)
-data/**/tpm_matrix.csv
-
-# Local databases / logs
-*.duckdb
-*.duckdb.wal
-*.log
