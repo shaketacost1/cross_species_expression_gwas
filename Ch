@@ -42,17 +42,32 @@ for f in ctcf_raw/*.bed.gz; do
   >> ctcf_merged.narrowPeak
 done
 
+# from the human/ directory where ctcf_raw/ lives
+echo -e "chrom\tstart\tend\tname\tscore\tstrand\tsignalValue\tpValue\tqValue\tsummit\tsource" > ctcf_merged.narrowPeak
+
+for f in ctcf_raw/*.bed.gz; do
+  acc=$(basename "$f" | sed -E 's/^([A-Z0-9]+).*/\1/')
+  gzip -cd "$f" \
+  | awk -v src="$acc" 'BEGIN{OFS="\t"}{print $1,$2,$3,$4,$5,$6,$7,$8,$9,$10,src}' \
+  >> ctcf_merged.narrowPeak
+done
+
+# sort for downstream compatibility (lexicographic chrom, numeric start)
+LC_ALL=C sort -k1,1 -k2,2n ctcf_merged.narrowPeak -o ctcf_merged.narrowPeak
+
+awk 'BEGIN{OFS="\t"} NR>1{print $1,$2,$3,$11}' ctcf_merged.narrowPeak > ctcf_merged.bed
+
+
 # spot-check
 head ctcf_merged.narrowPeak
 
 
 mkdir -p ~/my_project/data/regulatory/human/ctcf
-mv ctcf_raw ~/my_project/data/regulatory/human/ctcf/
-mv ctcf_merged.narrowPeak ~/my_project/data/regulatory/human/ctcf/  # if you created it
+mv ctcf_raw ctcf_merged.narrowPeak ctcf_merged.bed ctcf_metadata.csv ~/my_project/data/regulatory/human/ctcf/
 
 
 cd ~/my_project
-git lfs track "*.bed.gz" "*.narrowPeak"
+git lfs track "*.bed.gz" "*.narrowPeak" "*.bed"
 git add .gitattributes data/regulatory/human/ctcf
-git commit -m "Add human CTCF narrowPeak files from ENCODE (GRCh38)"
+git commit -m "Add human CTCF narrowPeak peaks (GRCh38) + merged set and metadata"
 git push origin main
