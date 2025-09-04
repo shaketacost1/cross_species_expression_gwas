@@ -17,6 +17,23 @@ awk -F'\t' -v c="$COL" 'NR>1 && $c!="" {print $c}' ctcf_report.tsv \
 | awk '{u=$0; if(u ~ /^https?:\/\//) print u; else print "https://www.encodeproject.org" u}' \
 > ctcf_urls.txt
 
+
+# copy the report you downloaded into this folder first, or point to the full path
+F=~/Downloads/file_report_2025_9_4_3h_31m.tsv
+
+# find column indices
+ACC=$(awk -F'\t' 'NR==2{for(i=1;i<=NF;i++) if($i=="Accession") print i}' "$F")
+BIO=$(awk -F'\t' 'NR==2{for(i=1;i<=NF;i++) if($i=="Biosample name") print i}' "$F")
+ORG=$(awk -F'\t' 'NR==2{for(i=1;i<=NF;i++) if($i=="Organ") print i}' "$F")
+ASM=$(awk -F'\t' 'NR==2{for(i=1;i<=NF;i++) if($i=="Genome assembly") print i}' "$F")
+OTY=$(awk -F'\t' 'NR==2{for(i=1;i<=NF;i++) if($i=="Output type") print i}' "$F")
+
+# write metadata CSV (skip the first two header lines)
+awk -F'\t' -v a="$ACC" -v b="$BIO" -v o="$ORG" -v g="$ASM" -v t="$OTY" 'NR>2{
+  OFS=","; print $a,$b,$o,$g,$t
+}' "$F" | (echo "accession,biosample,organ,assembly,output_type"; cat) > ctcf_metadata.csv
+
+
 wc -l ctcf_urls.txt
 head -5 ctcf_urls.txt
 
