@@ -1,1 +1,21 @@
+TARGET=CTCF ASSEMBLY=GRCh38; curl -sG 'https://www.encodeproject.org/search/' \
+  --data-urlencode type=File \
+  --data-urlencode assay_title='ChIP-seq' \
+  --data-urlencode target.label="$TARGET" \
+  --data-urlencode assembly="$ASSEMBLY" \
+  --data-urlencode status=released \
+  --data-urlencode file_format=narrowPeak \
+  --data-urlencode format=json \
+  --data-urlencode limit=all \
+  -H 'Accept: application/json' \
+| jq -r '.["@graph"][].href' \
+| sed 's|^|https://www.encodeproject.org|g' > enc_CTCF_urls.txt
 
+wc -l enc_${TARGET}_urls.txt
+
+
+
+
+mkdir -p enc_CTCF_raw
+wget -c -i enc_CTCF_urls.txt -P enc_CTCF_raw
+ls -lh enc_CTCF_raw | head
