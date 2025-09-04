@@ -1,4 +1,48 @@
 
+# 1) Make sure folders exist
+mkdir -p data/regulatory/human/ctcf_raw
+
+# 2) Re-download the report explicitly as TSV
+CTCF_TSV_URL="https://www.encodeproject.org/report/?type=File&assay_title=TF+ChIP-seq&target.label=CTCF&status=released&file_type=bed+narrowPeak&biosample_ontology.organ_slims=liver&assembly=GRCh38&limit=all&format=tsv"
+curl -fsSL -H "Accept: text/tsv" "$CTCF_TSV_URL" -o data/regulatory/human/ctcf_report.tsv
+
+# 3) Quick sanity check — first 2 lines should be a timestamp/URL line then a tabbed header row
+sed -n '1,2p' data/regulatory/human/ctcf_report.tsv
+
+# 4) Find the "Download URL" column index from the header (line 2)
+COL=$(awk -F'\t' 'NR==2{for(i=1;i<=NF;i++) if($i=="Download URL"){print i; exit}}' data/regulatory/human/ctcf_report.tsv)
+echo "Download URL col = $COL"
+
+# 5) Extract the URLs (skip first 2 lines), prefix with domain when needed
+tail -n +3 data/regulatory/human/ctcf_report.tsv \
+| awk -F'\t' -v c="$COL" 'NF && $c!="" {u=$c; if(u ~ /^https?:\/\//) print u; else print "https://www.encodeproject.org" u}' \
+> data/regulatory/human/ctcf_urls.txt
+
+# 6) Inspect a few and count
+head -5 data/regulatory/human/ctcf_urls.txt
+wc -l data/regulatory/human/ctcf_urls.txt
+
+# 7) Download the peaks
+wget -c -i data/regulatory/human/ctcf_urls.txt -P data/regulatory/human/ctcf_raw
+
+# 8) Verify content
+ls -lh data/regulatory/human/ctcf_raw | wc -l
+du -sh data/regulatory/human/ctcf_raw
+gzip -cd data/regulatory/human/ctcf_raw/*.bed.gz | head
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 cd ~/my_project
 
 # 1) Confirm the TSV exists and there are no weird chars in the path
