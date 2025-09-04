@@ -1,4 +1,7 @@
-shaketaveal@Shaketas-MacBook-Pro human % curl -sG 'https://www.encodeproject.org/search/' \
+export TARGET=CTCF
+export ASSEMBLY=GRCh38
+
+curl -sG 'https://www.encodeproject.org/search/' \
   --data-urlencode "type=Experiment" \
   --data-urlencode "assay_title=ChIP-seq" \
   --data-urlencode "target.label=${TARGET}" \
@@ -7,19 +10,8 @@ shaketaveal@Shaketas-MacBook-Pro human % curl -sG 'https://www.encodeproject.org
   --data-urlencode "format=json" \
   -H 'Accept: application/json' \
   -o enc_${TARGET}_experiments.json
-shaketaveal@Shaketas-MacBook-Pro human % jq -r '
-  .["@graph"][]
-  | .files[]
-  | select(
-      (.assembly == "'${ASSEMBLY}'")
-      and (.output_type == "peaks")
-      and ((.file_type == "bed narrowPeak") or (.file_type == "bigBed narrowPeak"))
-    )
-  | .href
-' enc_${TARGET}_experiments.json \
-| sed 's|^|https://www.encodeproject.org|g' > enc_${TARGET}_urls.txt
 
-shaketaveal@Shaketas-MacBook-Pro human % wc -l enc_${TARGET}_urls.txt
-head enc_${TARGET}_urls.txt
-       0 enc_CTCF_urls.txt
-shaketaveal@Shaketas-MacBook-Pro human % 
+
+jq -r '.["@graph"][0].files[0] | {assembly,output_type,file_format,file_format_type,file_type,href}' enc_${TARGET}_experiments.json
+
+
