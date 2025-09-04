@@ -22,17 +22,32 @@ ls -lh enc_CTCF_raw | head
 
 
 
-shaketaveal@Shaketas-MacBook-Pro human % TARGET=CTCF ASSEMBLY=GRCh38; curl -sG 'https://www.encodeproject.org/search/' \
-  --data-urlencode type=File \
-  --data-urlencode assay_title='ChIP-seq' \
-  --data-urlencode target.label="$TARGET" \
-  --data-urlencode assembly="$ASSEMBLY" \
-  --data-urlencode status=released \
-  --data-urlencode file_format=narrowPeak \
-  --data-urlencode format=json \
-  --data-urlencode limit=all \
-  -H 'Accept: application/json' \
+# set variables (optional)
+TARGET=CTCF
+ASSEMBLY=GRCh38
+
+# Query ENCODE Files for CTCF narrowPeaks on GRCh38
+curl -sG "https://www.encodeproject.org/search/" \
+  --data-urlencode "type=File" \
+  --data-urlencode "file_format=bed+narrowPeak" \
+  --data-urlencode "output_type=peaks" \
+  --data-urlencode "assembly=${ASSEMBLY}" \
+  --data-urlencode "target.label=${TARGET}" \
+  --data-urlencode "status=released" \
+  --data-urlencode "format=json" \
+  --data-urlencode "limit=all" \
+  -H "Accept: application/json" \
+| tee enc_${TARGET}_raw.json \
 | jq -r '.["@graph"][].href' \
-| sed 's|^|https://www.encodeproject.org|g' > enc_CTCF_urls.txt
-shaketaveal@Shaketas-MacBook-Pro human % wc -l enc_${TARGET}_urls.txt
-       0 enc_CTCF_urls.txt
+| sed 's|^|https://www.encodeproject.org|g' > enc_${TARGET}_urls.txt
+
+# Sanity check: how many files?
+jq '.["@graph"] | length' enc_${TARGET}_raw.json
+wc -l enc_${TARGET}_urls.txt
+
+# Peek at first few URLs
+head enc_${TARGET}_urls.txt
+
+# Download them
+mkdir -p enc_${TARGET}_raw
+wget -c -i enc_${TARGET}_urls.txt -P enc_${TARGET}_raw
