@@ -1,4 +1,4 @@
-F=data/regulatory/human/ctcf_report.tsv  # despite .tsv extension, it's JSON
+F=data/regulatory/human/ctcf_report.tsv
 
 jq -r '.["@graph"][]
   | select(.assembly=="GRCh38")
