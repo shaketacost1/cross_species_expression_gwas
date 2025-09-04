@@ -19,3 +19,40 @@ awk -F'\t' -v c="$COL" 'NR>1 && $c!="" {print $c}' ctcf_report.tsv \
 
 wc -l ctcf_urls.txt
 head -5 ctcf_urls.txt
+
+
+mkdir -p ctcf_raw
+wget -c -i ctcf_urls.txt -P ctcf_raw
+
+
+# how many files and total size?
+ls -lh ctcf_raw | wc -l
+du -sh ctcf_raw
+# peek a file
+gzip -cd ctcf_raw/*.bed.gz | head
+
+
+# create a merged narrowPeak and tag each line with its source accession
+echo -e "chrom\tstart\tend\tname\tscore\tstrand\tsignalValue\tpValue\tqValue\tsummit\tsource" > ctcf_merged.narrowPeak
+
+for f in ctcf_raw/*.bed.gz; do
+  acc=$(basename "$f" | sed -E 's/^([A-Z0-9]+).*/\1/')
+  gzip -cd "$f" \
+  | awk -v src="$acc" 'BEGIN{OFS="\t"} {print $1,$2,$3,$4,$5,$6,$7,$8,$9,$10,src}' \
+  >> ctcf_merged.narrowPeak
+done
+
+# spot-check
+head ctcf_merged.narrowPeak
+
+
+mkdir -p ~/my_project/data/regulatory/human/ctcf
+mv ctcf_raw ~/my_project/data/regulatory/human/ctcf/
+mv ctcf_merged.narrowPeak ~/my_project/data/regulatory/human/ctcf/  # if you created it
+
+
+cd ~/my_project
+git lfs track "*.bed.gz" "*.narrowPeak"
+git add .gitattributes data/regulatory/human/ctcf
+git commit -m "Add human CTCF narrowPeak files from ENCODE (GRCh38)"
+git push origin main
