@@ -1,4 +1,4 @@
-export TARGET=CTCF
+shaketaveal@Shaketas-MacBook-Pro human % export TARGET=CTCF
 export ASSEMBLY=GRCh38
 
 curl -sG 'https://www.encodeproject.org/search/' \
@@ -10,8 +10,13 @@ curl -sG 'https://www.encodeproject.org/search/' \
   --data-urlencode "format=json" \
   -H 'Accept: application/json' \
   -o enc_${TARGET}_experiments.json
-
-
-jq -r '.["@graph"][0].files[0] | {assembly,output_type,file_format,file_format_type,file_type,href}' enc_${TARGET}_experiments.json
-
-
+shaketaveal@Shaketas-MacBook-Pro human % jq -r '.["@graph"][0].files[0] | {assembly,output_type,file_format,file_format_type,file_type,href}' enc_${TARGET}_experiments.json
+{
+  "assembly": null,
+  "output_type": null,
+  "file_format": null,
+  "file_format_type": null,
+  "file_type": null,
+  "href": null
+}
+shaketaveal@Shaketas-MacBook-Pro human % 
