@@ -1,0 +1,7 @@
+cut -f20 file_report_2025_9_4_3h_31m.tsv | grep -v "Download URL" > ctcf_urls.txt
+
+
+mkdir -p ctcf_raw
+wget -c -i ctcf_urls.txt -P ctcf_raw
+
+ls -lh ctcf_raw
