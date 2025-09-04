@@ -1,9 +1,4 @@
-# In your human/ directory
-TARGET=CTCF
-ASSEMBLY=GRCh38
-
-# 1) Get CTCF ChIP-seq experiments (released)
-curl -sG 'https://www.encodeproject.org/search/' \
+shaketaveal@Shaketas-MacBook-Pro human % curl -sG 'https://www.encodeproject.org/search/' \
   --data-urlencode "type=Experiment" \
   --data-urlencode "assay_title=ChIP-seq" \
   --data-urlencode "target.label=${TARGET}" \
@@ -12,9 +7,7 @@ curl -sG 'https://www.encodeproject.org/search/' \
   --data-urlencode "format=json" \
   -H 'Accept: application/json' \
   -o enc_${TARGET}_experiments.json
-
-# 2) From each experiment, collect Files that are GRCh38 narrowPeak peaks (bed or bigBed)
-jq -r '
+shaketaveal@Shaketas-MacBook-Pro human % jq -r '
   .["@graph"][]
   | .files[]
   | select(
@@ -26,10 +19,7 @@ jq -r '
 ' enc_${TARGET}_experiments.json \
 | sed 's|^|https://www.encodeproject.org|g' > enc_${TARGET}_urls.txt
 
-# 3) Sanity check counts & first few
-wc -l enc_${TARGET}_urls.txt
+shaketaveal@Shaketas-MacBook-Pro human % wc -l enc_${TARGET}_urls.txt
 head enc_${TARGET}_urls.txt
-
-# 4) Download
-mkdir -p enc_${TARGET}_raw
-wget -c -i enc_${TARGET}_urls.txt -P enc_${TARGET}_raw
+       0 enc_CTCF_urls.txt
+shaketaveal@Shaketas-MacBook-Pro human % 
