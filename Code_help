@@ -1,21 +1,35 @@
-shaketaveal@Shaketas-MacBook-Pro human % TARGET=CTCF
+# In your human/ directory
+TARGET=CTCF
 ASSEMBLY=GRCh38
-shaketaveal@Shaketas-MacBook-Pro human % curl -sG "https://www.encodeproject.org/search/" \
-  --data-urlencode "type=File" \
-  --data-urlencode "file_format=bed+narrowPeak" \
-  --data-urlencode "output_type=peaks" \
-  --data-urlencode "assembly=${ASSEMBLY}" \
+
+# 1) Get CTCF ChIP-seq experiments (released)
+curl -sG 'https://www.encodeproject.org/search/' \
+  --data-urlencode "type=Experiment" \
+  --data-urlencode "assay_title=ChIP-seq" \
   --data-urlencode "target.label=${TARGET}" \
   --data-urlencode "status=released" \
-  --data-urlencode "format=json" \
   --data-urlencode "limit=all" \
-  -H "Accept: application/json" \
-| tee enc_${TARGET}_raw.json \
-| jq -r '.["@graph"][].href' \
+  --data-urlencode "format=json" \
+  -H 'Accept: application/json' \
+  -o enc_${TARGET}_experiments.json
+
+# 2) From each experiment, collect Files that are GRCh38 narrowPeak peaks (bed or bigBed)
+jq -r '
+  .["@graph"][]
+  | .files[]
+  | select(
+      (.assembly == "'${ASSEMBLY}'")
+      and (.output_type == "peaks")
+      and ((.file_type == "bed narrowPeak") or (.file_type == "bigBed narrowPeak"))
+    )
+  | .href
+' enc_${TARGET}_experiments.json \
 | sed 's|^|https://www.encodeproject.org|g' > enc_${TARGET}_urls.txt
-shaketaveal@Shaketas-MacBook-Pro human % jq '.["@graph"] | length' enc_${TARGET}_raw.json
+
+# 3) Sanity check counts & first few
 wc -l enc_${TARGET}_urls.txt
-0
-       0 enc_CTCF_urls.txt
-shaketaveal@Shaketas-MacBook-Pro human % head enc_${TARGET}_urls.txt
-shaketaveal@Shaketas-MacBook-Pro human % 
+head enc_${TARGET}_urls.txt
+
+# 4) Download
+mkdir -p enc_${TARGET}_raw
+wget -c -i enc_${TARGET}_urls.txt -P enc_${TARGET}_raw
