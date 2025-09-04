@@ -5,3 +5,17 @@ mkdir -p ctcf_raw
 wget -c -i ctcf_urls.txt -P ctcf_raw
 
 ls -lh ctcf_raw
+
+
+
+COL=$(awk -F'\t' 'NR==1{for(i=1;i<=NF;i++) if($i=="Download URL"){print i; exit}}' ctcf_report.tsv)
+echo "Download URL column index: $COL"
+
+
+# extract URLs (skip header), drop blanks, make absolute URLs
+awk -F'\t' -v c="$COL" 'NR>1 && $c!="" {print $c}' ctcf_report.tsv \
+| awk '{u=$0; if(u ~ /^https?:\/\//) print u; else print "https://www.encodeproject.org" u}' \
+> ctcf_urls.txt
+
+wc -l ctcf_urls.txt
+head -5 ctcf_urls.txt
