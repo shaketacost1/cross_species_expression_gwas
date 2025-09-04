@@ -1,14 +1,13 @@
-
-# Already saved JSON report
 F=data/regulatory/human/ctcf_report.tsv  # despite .tsv extension, it's JSON
 
-jq -r '
-  .["@graph"][]
+jq -r '.["@graph"][]
   | select(.assembly=="GRCh38")
   | select((.file_type=="bed narrowPeak") or (.file_type=="bigBed narrowPeak"))
-  | "/files/\(.accession)/@@download/\(.filename)"
-' "$F" | sed 's|^|https://www.encodeproject.org|g' \
+  | "/files/\(.accession)/@@download/\(.filename)"' "$F" \
+| sed 's|^|https://www.encodeproject.org|g' \
 > data/regulatory/human/ctcf_urls.txt
+
+
 
 # Inspect result
 head -5 data/regulatory/human/ctcf_urls.txt
