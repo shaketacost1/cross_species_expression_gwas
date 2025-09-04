@@ -1,3 +1,55 @@
+
+mkdir -p data/regulatory/human/ctcf_raw
+wget -c -i data/regulatory/human/ctcf_urls.txt -P data/regulatory/human/ctcf_raw
+
+
+
+ls -lh data/regulatory/human/ctcf_raw | wc -l
+du -sh data/regulatory/human/ctcf_raw
+gzip -cd data/regulatory/human/ctcf_raw/*.bed.gz | head
+
+
+
+mkdir -p data/regulatory/human/derived
+# concat, keep standard chr*, sort, and merge
+gzip -cd data/regulatory/human/ctcf_raw/*.bed.gz \
+  | awk 'BEGIN{OFS="\t"} $1 ~ /^chr/ {print $1,$2,$3}' \
+  | sort -k1,1 -k2,2n \
+  | bedtools merge -i - \
+  > data/regulatory/human/derived/ctcf_merged.GRCh38.bed
+
+
+
+
+git lfs track "*.bed.gz"
+git add .gitattributes \
+       data/regulatory/human/ctcf_urls.txt \
+       data/regulatory/human/ctcf_raw/*.bed.gz \
+       data/regulatory/human/derived/ctcf_merged.GRCh38.bed
+git commit -m "Add human CTCF (GRCh38 liver) narrowPeak files and merged set"
+git push origin main
+
+
+cat > data/regulatory/human/README.md <<'EOF'
+CTCF (GRCh38, liver) narrowPeak files from ENCODE.
+- Source: ENCODE Report with filters:
+  type=File, assay_title=TF ChIP-seq, target=CTCF, status=released,
+  file_type=bed narrowPeak, organ=liver, assembly=GRCh38
+- Raw files: data/regulatory/human/ctcf_raw/*.bed.gz
+- Merged set: data/regulatory/human/derived/ctcf_merged.GRCh38.bed (bedtools merge)
+EOF
+git add data/regulatory/human/README.md
+git commit -m "Add README for human CTCF data (GRCh38 liver)"
+git push origin main
+
+
+
+
+
+
+
+
+
 F=data/regulatory/human/ctcf_report.tsv
 jq -r '.["@graph"][]
   | select(.assembly=="GRCh38")
