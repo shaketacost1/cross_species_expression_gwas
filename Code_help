@@ -1,22 +1,30 @@
-shaketaveal@Shaketas-MacBook-Pro human % export TARGET=CTCF
+export TARGET=CTCF
 export ASSEMBLY=GRCh38
 
+# Pull CTCF ChIP-seq narrowPeak files on GRCh38
 curl -sG 'https://www.encodeproject.org/search/' \
-  --data-urlencode "type=Experiment" \
+  --data-urlencode "type=File" \
   --data-urlencode "assay_title=ChIP-seq" \
   --data-urlencode "target.label=${TARGET}" \
+  --data-urlencode "assembly=${ASSEMBLY}" \
+  --data-urlencode "file_format=bed" \
+  --data-urlencode "file_format_type=narrowPeak" \
   --data-urlencode "status=released" \
-  --data-urlencode "limit=all" \
   --data-urlencode "format=json" \
+  --data-urlencode "limit=all" \
   -H 'Accept: application/json' \
-  -o enc_${TARGET}_experiments.json
-shaketaveal@Shaketas-MacBook-Pro human % jq -r '.["@graph"][0].files[0] | {assembly,output_type,file_format,file_format_type,file_type,href}' enc_${TARGET}_experiments.json
-{
-  "assembly": null,
-  "output_type": null,
-  "file_format": null,
-  "file_format_type": null,
-  "file_type": null,
-  "href": null
-}
-shaketaveal@Shaketas-MacBook-Pro human % 
+  -o enc_${TARGET}_files.json
+
+# How many?
+jq -r '.total' enc_${TARGET}_files.json
+
+# Extract URLs
+jq -r '.["@graph"][].href' enc_${TARGET}_files.json \
+| sed 's|^|https://www.encodeproject.org|g' > enc_${TARGET}_urls.txt
+
+wc -l enc_${TARGET}_urls.txt
+head enc_${TARGET}_urls.txt
+
+# Download
+mkdir -p enc_${TARGET}_raw
+wget -c -i enc_${TARGET}_urls.txt -P enc_${TARGET}_raw
