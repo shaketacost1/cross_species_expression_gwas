@@ -1,0 +1,52 @@
+Sprint 1–2 Goals (Weeks 1–2)
+1. Data Infrastructure Setup
+Repository: Confirm GitHub repo structure is finalized (already created, but verify all subfolders for enhancers, CTCF, expression, GWAS).
+Shared Access: Ensure all team members can clone, push, and pull.
+.gitignore: Confirm large/raw files excluded.
+Data Formats: Standardize to Parquet/DuckDB where possible.
+
+Deliverable: A clean, reproducible repo with standardized file structure and working example data files.
+2. Enhancer Dataset Collection
+Grace (lead): Gather enhancer datasets (ENCODE, Villar 2015, PHANTOM, VISTA).
+Shaketa (support): Cross-check for coverage in human, macaque, mouse, pig.
+Start simple: download, document metadata, store raw files.
+Convert at least one species dataset into Parquet to test downstream compatibility.
+
+Deliverable: Raw enhancer datasets downloaded for at least 2 species (human + mouse) with metadata documentation.
+3. CTCF Binding Dataset Collection
+Grace (lead): Pull ENCODE CTCF ChIP-seq peaks (start with human).
+Test Integration: Store in data/ctcf/ in standardized format (BED or Parquet).
+
+Deliverable: Human CTCF binding dataset cleaned and stored in repo.
+4. Expression Data Verification
+Shaketa (lead): Verify that Bgee expression files are properly formatted (TPM long tables).
+Test Load: Write a short Python/R script to read the Parquet and produce a small QC plot (e.g., expression histogram).
+
+Deliverable: QC plot and short README on how expression files are structured.
+5. GWAS Data QC
+Already prepped (alcohol, BMI, inflammation).
+Task: Write documentation (docs/gwas_README.md) explaining file structure and filtering logic (p ≤ 5e-08, trait-specific subsets).
+
+Deliverable: Clear instructions so teammates can load GWAS data without rerunning scripts.
+6. First Integration Test
+Use BadTools / Pi.BadTools to do one overlap test:
+Example: intersect human enhancers with human CTCF binding sites.
+Keep it small (chr1 only) for testing.
+
+Deliverable: A short test script and table of overlaps for chr1.
+7. Planning & Communication
+Sprint Planning Meeting:
+Create 3–5 user stories on Trello (e.g., “As a researcher, I want to query enhancers by species so I can…”).
+Assign effort levels with planning poker.
+Client Check-in:
+Confirm species priority (human + macaque + mouse + pig).
+Confirm disease traits focus (alcohol, BMI, inflammation).
+
+Deliverable: Updated Trello board + confirmation email/notes from client meeting.
+Sprint 1–2 End Deliverables
+
+Repo + data structure finalized.
+Enhancer + CTCF raw datasets collected (human + at least one more species).
+Expression & GWAS QC confirmed with documentation.
+First overlap test (enhancers vs. CTCF, chr1).
+Updated Trello board + client alignment on priorities.
