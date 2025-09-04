@@ -1,3 +1,4 @@
 *.parquet filter=lfs diff=lfs merge=lfs -text
 data/expression/*/tpm_long.parquet filter=lfs diff=lfs merge=lfs -text
 data/expression/*/sample_metadata.csv filter=lfs diff=lfs merge=lfs -text
+*.bed.gz filter=lfs diff=lfs merge=lfs -text
