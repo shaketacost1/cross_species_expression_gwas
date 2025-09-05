@@ -4,7 +4,6 @@ data/**/enhancers_raw/**
 data/**/h3k27ac_raw/**
 data/gwas/raw/**
 
-data/**/derived/**/*.bed
 data/**/derived/**/*.parquet
 
 
@@ -15,3 +14,11 @@ data/**/derived/**/*.parquet
 .Rhistory
 .Rproj.user/
 .DS_Store
+
+# Allow derived regulatory outputs
+!data/**/derived/
+!data/**/derived/**/*.bed
+
+# Allow derived parquet/tsv.gz
+!data/**/derived/**/*.parquet
+!data/**/derived/**/*.tsv.gz
