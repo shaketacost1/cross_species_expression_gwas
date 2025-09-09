@@ -22,3 +22,5 @@ data/**/derived/**/*.parquet
 # Allow derived parquet/tsv.gz
 !data/**/derived/**/*.parquet
 !data/**/derived/**/*.tsv.gz
+resources/chains/
+data/regulatory/*/derived/*enhancer_conservation.tsv.gz
