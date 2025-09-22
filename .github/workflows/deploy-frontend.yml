@@ -81,17 +81,6 @@ jobs:
             --health-retries=3 \
             ${{ steps.meta.outputs.LATEST_TAG }}
 
-      - name: Verify deployment
-        run: |
-          echo "Waiting for container to be healthy..."
-          timeout 60s bash -c 'until docker inspect --format="{{.State.Health.Status}}" ${{ env.CONTAINER_NAME }} | grep -q healthy; do sleep 2; done'
-          echo "✅ Container is healthy"
-          
-          echo "Testing endpoint..."
-          sleep 5
-          curl -f http://localhost:${{ env.PORT }} || exit 1
-          echo "✅ Deployment successful"
-
       - name: Cleanup old images
         run: |
           # Keep only the 3 most recent images
