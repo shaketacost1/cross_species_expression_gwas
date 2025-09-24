@@ -1,0 +1,3 @@
+Enhancers: 33022 
+CTCF peaks: 32726 
+Enhancers with CTCF overlap: 1389 (4.21%)

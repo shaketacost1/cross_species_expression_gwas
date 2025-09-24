@@ -1,24 +1,26 @@
-# R noise
+
+data/**/ctcf_raw/**
+data/**/enhancers_raw/**
+data/**/h3k27ac_raw/**
+data/gwas/raw/**
+
+data/**/derived/**/*.parquet
+
+
+!data/**/metadata/**
+!data/**/derived/*qc*.tsv
+
+
 .Rhistory
 .Rproj.user/
-.RData
-.Ruserdata
-
-# Python caches
-__pycache__/
-*.pyc
-
-# macOS
 .DS_Store
 
-# Large/raw data
-data/gwas/raw/
-data/raw/
+# Allow derived regulatory outputs
+!data/**/derived/
+!data/**/derived/**/*.bed
 
-# Wide CSV exports (optional, large)
-data/**/tpm_matrix.csv
-
-# Local databases / logs
-*.duckdb
-*.duckdb.wal
-*.log
+# Allow derived parquet/tsv.gz
+!data/**/derived/**/*.parquet
+!data/**/derived/**/*.tsv.gz
+resources/chains/
+data/regulatory/*/derived/*enhancer_conservation.tsv.gz
