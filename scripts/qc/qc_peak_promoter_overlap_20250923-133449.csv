@@ -1,0 +1,16 @@
+species,tissue,symbol,chrom,tss,n_promoter,n_near,promoter_hit
+human_hg38,Brain,APOE,chr19,44905791,0,6,FALSE
+human_hg38,Brain,DRD2,chr11,113475691,0,2,FALSE
+human_hg38,Brain,BDNF,chr11,27600000,0,1,FALSE
+human_hg38,Brain,GRIN2B,chr12,13982002,0,1,FALSE
+human_hg38,Brain,SCN1A,chr2,166182806,0,0,FALSE
+human_hg38,Heart,TTN,chr2,178830802,0,13,FALSE
+human_hg38,Heart,KCNQ1,chr11,2444654,0,11,FALSE
+human_hg38,Heart,MYH6,chr14,23408273,0,7,FALSE
+human_hg38,Heart,MYH7,chr14,23435660,0,6,FALSE
+human_hg38,Heart,PLN,chr6,118548296,0,3,FALSE
+human_hg38,Liver,PCSK9,chr1,55039447,0,2,FALSE
+human_hg38,Liver,HNF4A,chr20,44355857,0,2,FALSE
+human_hg38,Liver,ALB,chr4,73427687,0,2,FALSE
+human_hg38,Liver,APOB,chr2,21044073,0,0,FALSE
+human_hg38,Liver,CYP3A4,chr7,99784248,0,0,FALSE
