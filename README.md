@@ -1,4 +1,4 @@
-Here’s a **ready-to-paste section** for your `README.md` that clearly explains what belongs in **frontend**, **middleware**, and **backend**. I’ve written it in project-style Markdown so it drops right in:
+
 
 ---
 
