@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Prefer a project-local binary if present (bin/liftOver.bin),
+# else fall back to system PATH `liftOver`.
+if [[ -x "$(dirname "$0")/liftOver.bin" ]]; then
+  exec "$(dirname "$0")/liftOver.bin" "$@"
+elif command -v liftOver >/dev/null 2>&1; then
+  exec liftOver "$@"
+else
+  echo "ERROR: liftOver not found. Place UCSC binary at bin/liftOver.bin or install ucsc-liftover." >&2
+  exit 127
+fi
