@@ -8,20 +8,8 @@ This project is split into three layers: **frontend**, **middleware (API)**, and
 
 ### 1. Frontend
 
-You may use either a **web client** (React/Vue/etc.) or the existing **Shiny app**.
+ **Shiny app**.
 
-**If using a Web Client:**
-
-* `frontend/`
-
-  * `src/` – components, pages, API client
-  * `public/`
-  * `package.json`, lockfile
-  * `.env.example` (API base URL)
-* `openapi.yaml` or `docs/api.md` – API contract
-* `dev_data/sample_responses/` – small mock JSON responses for local testing
-
-**If using Shiny:**
 
 * `shiny/`
 
