@@ -1,0 +1,18 @@
+# Data and runtime files
+data/
+*.sqlite
+*.sqlite3
+*.db
+*.db-shm
+*.db-wal
+server.log
+server.pid
+__pycache__/
+*.pyc
+.env
+.venv
+.vscode/
+.DS_Store
+*.mov
+*.mp4
+*.zip

@@ -1,0 +1,11 @@
+shiny
+pandas
+matplotlib
+plotnine
+numpy
+scipy
+Pillow
+playwright
+pytest
+pytest-playwright
+uvicorn
