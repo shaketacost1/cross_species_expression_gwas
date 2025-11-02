@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # R noise
 .Rhistory
 .Rproj.user/
@@ -22,3 +23,33 @@ data/**/tpm_matrix.csv
 *.duckdb
 *.duckdb.wal
 *.log
+=======
+# OS
+.DS_Store
+
+# Large / generated data
+data/
+*.db
+*.zip
+*.tsv
+*.csv
+*.bed
+*.gz
+
+# Misc
+__pycache__/
+>>>>>>> e795033 (Initial commit (clean repo, code only))
+# OS
+.DS_Store
+
+# Large / generated data
+data/
+*.db
+*.zip
+*.tsv
+*.csv
+*.bed
+*.gz
+
+# Misc
+__pycache__/

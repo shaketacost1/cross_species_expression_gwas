@@ -1,0 +1,17 @@
+name: ipa-regland
+channels: [conda-forge, bioconda, defaults]
+dependencies:
+  - python=3.11
+  - sqlite
+  - pandas
+  - numpy
+  - pybedtools
+  - pyliftover
+  - pyarrow
+  - tqdm
+  - requests
+  - click
+  - pip
+  - pip:
+    - polars
+    - ucsc-liftover==0.4.0
