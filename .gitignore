@@ -53,3 +53,4 @@ data/
 
 # Misc
 __pycache__/
+Miniconda3-*.sh
